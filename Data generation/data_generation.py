@@ -72,7 +72,7 @@ def estimate_data(date, time):
 
 def main():
     # open the file in the write mode
-    with open('./inventory_data', 'w', newline='') as f:
+    with open('../Neural network/inventory_data', 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f, delimiter=',')
         inventory = []
