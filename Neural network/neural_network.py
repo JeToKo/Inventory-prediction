@@ -24,7 +24,7 @@ def data():
     train_size = int(0.8 * num_samples)
 
     indices = np.arange(num_samples)
-    np.random.shuffle(indices)
+    #np.random.shuffle(indices)
 
     train_indices = indices[:train_size]
     test_indices = indices[train_size:]
@@ -61,7 +61,7 @@ def test_prediction(model_):
     dates = ['2023-12-16 06:00:00', '2023-12-16 12:00:00',
              '2023-12-16 18:00:00', '2023-10-16 06:00:00',
              '2023-10-16 12:00:00', '2023-10-16 18:00:00',
-             '2023-08-16 06:00:00', '2023-08-16 18:00:00',
+             '2023-08-16 06:00:00', '2023-08-16 12:00:00',
              '2023-08-16 18:00:00', '2035-12-16 06:00:00',
              '2035-12-16 12:00:00', '2036-12-16 18:00:00']
     for test_datetime_str in dates:
@@ -122,12 +122,22 @@ def input_prediction(model_):
 
 
 def main():
-    epochs = 200000
+    epochs = 20000
     batch_size = 1000
     train_x, test_x, train_y, test_y = data()
 
     model = neural_network(train_x, test_x, train_y, test_y,
                            epochs, batch_size)
+
+    print('***********************************')
+    print(train_x)
+    print('***********************************')
+    print(train_y)
+    print('***********************************')
+    print(test_x)
+    print('***********************************')
+    print(test_y)
+    print('***********************************')
 
     accuracy = model.evaluate(test_x, test_y)
 
@@ -138,6 +148,5 @@ def main():
     print()
 
     test_prediction(model)
-
 
 main()
