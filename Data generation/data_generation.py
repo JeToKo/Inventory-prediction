@@ -72,7 +72,7 @@ def estimate_data(date, time):
 
 def main():
     # open the file in the write mode
-    with open('../Neural network/inventory_data', 'w', newline='') as f:
+    with open('../Neural network/history_inventory_data', 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f, delimiter=',')
         inventory = []
@@ -82,7 +82,7 @@ def main():
         day = datetime.datetime(2023, 1, 1, 0, 0, 0)
 
         # Add data until goal day is achieved
-        while str(day.date()) != '2030-01-01':
+        while str(day.date()) != '2031-01-01':
             inv = estimate_data(day.date(), day.time())
 
             inventory.append(inv)
