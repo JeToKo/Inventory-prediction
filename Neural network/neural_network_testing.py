@@ -111,7 +111,7 @@ def main():
     lr_model = calculate_regression()
 
     print()
-    print(lr_model.intercept_, lr_model.coef_)
+    print('Linear regression model:',lr_model.intercept_, lr_model.coef_)
     print()
 
     test_prediction(nn_model, lr_model)
