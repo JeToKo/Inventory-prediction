@@ -70,7 +70,7 @@ def generate_data(date, time, a, b):
 
 def main():
     # open the file in the write mode
-    with open('../Neural network/inventory_data_v3', 'w', newline='') as f:
+    with open('../Neural network/inventory_data_v2', 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f, delimiter=',')
 

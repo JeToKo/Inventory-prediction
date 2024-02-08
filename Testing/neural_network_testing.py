@@ -45,8 +45,7 @@ def data():
 
 def calculate_regression(train_x, train_y):
     regression_model = linear_model.LinearRegression()
-    x = np.array([train_x['year'] ,train_x['month'], train_x['day'],
-                  train_x['hour'], train_x['minute']]).transpose()
+    x = np.array([train_x['month'], train_x['hour']]).transpose()
 
     y =  np.array(train_y)
     reg = regression_model.fit(x, y)
@@ -68,26 +67,25 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
     lr_accuracy_values = []
 
     for (year, month, day, hour, minute), inventory in zip(test_x.itertuples(index=False), test_y):
-        input_features = np.array([[year, month, day, hour, minute]])
+        input_features = np.array([[ month, hour]])
 
         nn_predicted_number = nn_model.predict(input_features)[0][0]
-        lr_predicted_number = lr_model.predict(np.array([[year, month, day,
-                                                          hour, minute]]))[0]
+        lr_predicted_number = lr_model.predict(np.array([[month, hour]]))[0]
 
 
         inventory_values.append(inventory)
-        nn_values.append(nn_predicted_number)
-        lr_values.append(lr_predicted_number)
+        nn_values.append(nn_predicted_number * scale_factor)
+        lr_values.append(lr_predicted_number * scale_factor)
         time.append(datetime(year, month, day, hour, minute))
 
         if inventory != 0:
             accuracy = (abs(nn_predicted_number - inventory) / inventory)
-            if accuracy < 0.30:
+            if accuracy < 0.20:
                 nn_accuracy_values.append(accuracy)
 
         if inventory != 0:
             accuracy = (abs(lr_predicted_number - inventory) / inventory)
-            if accuracy < 0.30:
+            if accuracy < 0.20:
                 lr_accuracy_values.append(accuracy)
 
 
@@ -190,7 +188,7 @@ def input_prediction(model_):
 
 def main():
     nn_model = tf.keras.models.load_model(
-        '../Neural network/inventory_model_v2.keras')
+        '../Neural network/inventory_model_v1.5.keras')
 
     train_x, test_x, train_y, test_y = data()
 

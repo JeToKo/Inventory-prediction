@@ -19,7 +19,7 @@ def data():
     file['hour'] = file['datetime'].dt.hour
     file['minute'] = file['datetime'].dt.minute
 
-    features = ['year', 'month', 'day', 'hour', 'minute']
+    features = ['month', 'hour',]
     x = file[features]
     y = file['number']
 
@@ -52,7 +52,7 @@ def neural_network(train_x, test_x, train_y, test_y, epochs, batch_size):
     model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size,
               validation_data=(test_x, test_y))
 
-    model.save('inventory_model_v2.keras')
+    model.save('inventory_model_v1.5.keras')
 
     return model
 
