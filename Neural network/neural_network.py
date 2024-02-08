@@ -9,14 +9,17 @@ import numpy as np
 
 
 def data():
-    file_path = 'history_inventory_data'
+    file_path = 'inventory_data_v2'
     file = pd.read_csv(file_path, names=['datetime', 'number'],
                        parse_dates=['datetime'])
 
+    file['year'] = file['datetime'].dt.year
     file['month'] = file['datetime'].dt.month
+    file['day'] = file['datetime'].dt.day
     file['hour'] = file['datetime'].dt.hour
+    file['minute'] = file['datetime'].dt.minute
 
-    features = ['month', 'hour']
+    features = ['year', 'month', 'day', 'hour', 'minute']
     x = file[features]
     y = file['number']
 
@@ -40,9 +43,8 @@ def neural_network(train_x, test_x, train_y, test_y, epochs, batch_size):
     model = tf.keras.Sequential([
         tf.keras.layers.Input(shape=(input_shape,)),
         tf.keras.layers.Dense(1024, activation='relu'),
-        tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dense(512, activation='relu'),
-        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(units=1),
     ])
 
     model.compile(optimizer='adam', loss='mean_squared_error')
@@ -50,7 +52,7 @@ def neural_network(train_x, test_x, train_y, test_y, epochs, batch_size):
     model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size,
               validation_data=(test_x, test_y))
 
-    model.save('history_inventory_model.keras')
+    model.save('inventory_model_v2.keras')
 
     return model
 

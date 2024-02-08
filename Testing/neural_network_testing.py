@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 Copy from neural_network.py
 """
 def data():
-    file_path = '../Neural network/inventory_data'
+    file_path = '../Neural network/inventory_data_v2'
     file = pd.read_csv(file_path, names=['datetime', 'number'],
                        parse_dates=['datetime'])
     file['year'] = file['datetime'].dt.year
@@ -23,11 +23,9 @@ def data():
     file['hour'] = file['datetime'].dt.hour
     file['minute'] = file['datetime'].dt.minute
 
-    train_features = ['month', 'hour']
-    x_train = file[train_features]
-
-    test_features = ['year', 'month', 'day', 'hour', 'minute']
-    x_test = file[test_features]
+    features = ['year', 'month', 'day', 'hour', 'minute']
+    x_train = file[features]
+    x_test = file[features]
 
     y = file['number']
 
@@ -47,7 +45,8 @@ def data():
 
 def calculate_regression(train_x, train_y):
     regression_model = linear_model.LinearRegression()
-    x = np.array([train_x['month'], train_x['hour']]).transpose()
+    x = np.array([train_x['year'] ,train_x['month'], train_x['day'],
+                  train_x['hour'], train_x['minute']]).transpose()
 
     y =  np.array(train_y)
     reg = regression_model.fit(x, y)
@@ -56,8 +55,8 @@ def calculate_regression(train_x, train_y):
 def test_prediction(nn_model, lr_model, test_x, test_y):
     scale_factor = 0.7
 
-    NN_values = []
-    LR_values = []
+    nn_values = []
+    lr_values = []
     inventory_values = []
     time = []
 
@@ -65,18 +64,32 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
     current_month_values = []
     month_values = []
 
+    nn_accuracy_values = []
+    lr_accuracy_values = []
+
     for (year, month, day, hour, minute), inventory in zip(test_x.itertuples(index=False), test_y):
-        input_features = np.array([[month, hour]])
+        input_features = np.array([[year, month, day, hour, minute]])
 
         nn_predicted_number = nn_model.predict(input_features)[0][0]
-        lr_predicted_number = lr_model.predict(np.array([[month,
-                                                          hour]]))[0]
+        lr_predicted_number = lr_model.predict(np.array([[year, month, day,
+                                                          hour, minute]]))[0]
 
-        NN_values.append(nn_predicted_number * scale_factor)
-        LR_values.append(lr_predicted_number * scale_factor)
 
         inventory_values.append(inventory)
+        nn_values.append(nn_predicted_number)
+        lr_values.append(lr_predicted_number)
         time.append(datetime(year, month, day, hour, minute))
+
+        if inventory != 0:
+            accuracy = (abs(nn_predicted_number - inventory) / inventory)
+            if accuracy < 0.30:
+                nn_accuracy_values.append(accuracy)
+
+        if inventory != 0:
+            accuracy = (abs(lr_predicted_number - inventory) / inventory)
+            if accuracy < 0.30:
+                lr_accuracy_values.append(accuracy)
+
 
         if current_month != month:
             if current_month != 0:
@@ -90,13 +103,17 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
 
         print(f"Observed inventory level: {inventory}, Month: {month}, Hour: {hour}")
 
-        print(f"Neural network predicted number: {nn_predicted_number * scale_factor}")
-        print(f"Linear regression predicted number: {lr_predicted_number * scale_factor}")
+        print(f"Neural network predicted number: {nn_predicted_number}")
+        print(f"Linear regression predicted number: {lr_predicted_number}")
 
         print(f"Neural network scaled Predicted number: {nn_predicted_number * scale_factor}")
         print(f"Linear regression scaled Predicted number: {lr_predicted_number * scale_factor}")
         print()
 
+    print(f"Neural network accuracy: {(len(nn_accuracy_values) / len(inventory_values))*100}")
+    print(f"Linear regression accuracy: {(len(lr_accuracy_values) / len(inventory_values))*100}")
+
+    """
     month = 8
     for line in month_values:
         print(f'month_{month} = {line};')
@@ -104,14 +121,28 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
             month += 1
         else:
             month = 1
-
-    plt.plot(time, inventory_values, color='r', label='Observed Inventory Level')
-    plt.plot(time, NN_values, color='g', label='Neural Network' )
-    plt.plot(time, LR_values, color='b', label='Linear Regression')
-
+    """
 
     plt.ylabel('Inventory level')
     plt.xlabel('Time')
+    plt.plot(time, inventory_values, label='Simulated Inventory Level')
+    plt.plot(time, nn_values, color='g', label='Neural Network')
+    plt.legend()
+    plt.show()
+
+    plt.ylabel('Inventory level')
+    plt.xlabel('Time')
+    plt.plot(time, inventory_values, label='Simulated Inventory Level')
+    plt.plot(time, lr_values, color='r', label='Linear Regression')
+    plt.legend()
+    plt.show()
+
+    plt.ylabel('Inventory level')
+    plt.xlabel('Time')
+    plt.plot(time, inventory_values, label='Simulated Inventory Level')
+    plt.plot(time, nn_values, color='g', label='Neural Network')
+    plt.plot(time, lr_values, color='r', label='Linear Regression')
+
 
     plt.savefig('predict_graph.png')
 

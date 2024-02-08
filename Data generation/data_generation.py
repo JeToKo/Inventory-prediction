@@ -4,11 +4,9 @@ import random
 import matplotlib.pyplot as plt
 
 
-def estimate_data(date, time):
-    # date: 2033-01-01
+def generate_data(date, time, a, b):
+    # date: 2023-01-01
     # time: 00:00:00
-    a = 50
-    b = 100
 
     a_factor = 1
     b_factor = 1
@@ -65,25 +63,35 @@ def estimate_data(date, time):
         a -= 20
         b -= 20
 
-    data = random.randint(a*a_factor, b*b_factor)
+    data = random.randint(int(a * a_factor), int(b * b_factor))
     print(data)
     return data
 
 
 def main():
     # open the file in the write mode
-    with open('../Neural network/history_inventory_data', 'w', newline='') as f:
+    with open('../Neural network/inventory_data_v3', 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f, delimiter=',')
+
         inventory = []
         dates = []
 
+        a = 70
+        b = 100
+        current_year = 2020
+
         # Declare start day
-        day = datetime.datetime(2023, 1, 1, 0, 0, 0)
+        day = datetime.datetime(2020, 1, 1, 0, 0, 0)
 
         # Add data until goal day is achieved
         while str(day.date()) != '2031-01-01':
-            inv = estimate_data(day.date(), day.time())
+            if current_year != day.date().year:
+                a += 2
+                b += 2
+                current_year = day.date().year
+
+            inv = generate_data(day.date(), day.time(), a, b)
 
             inventory.append(inv)
             dates.append(day)
@@ -94,7 +102,7 @@ def main():
     plt.plot(dates, inventory)
     plt.ylabel('Inventory level')
     plt.xlabel('Year')
-    plt.savefig('inventory_graph.png')
+    plt.savefig('inventory_graph_v3.png')
     plt.show()
 
 
