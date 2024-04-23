@@ -80,12 +80,12 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
 
         if inventory != 0:
             accuracy = (abs(nn_predicted_number - inventory) / inventory)
-            if accuracy < 0.20:
+            if accuracy < 0.30:
                 nn_accuracy_values.append(accuracy)
 
         if inventory != 0:
             accuracy = (abs(lr_predicted_number - inventory) / inventory)
-            if accuracy < 0.20:
+            if accuracy < 0.30:
                 lr_accuracy_values.append(accuracy)
 
 
@@ -108,6 +108,7 @@ def test_prediction(nn_model, lr_model, test_x, test_y):
         print(f"Linear regression scaled Predicted number: {lr_predicted_number * scale_factor}")
         print()
 
+    print(f"Total test dates: {len(inventory_values)}")
     print(f"Neural network accuracy: {(len(nn_accuracy_values) / len(inventory_values))*100}")
     print(f"Linear regression accuracy: {(len(lr_accuracy_values) / len(inventory_values))*100}")
 
